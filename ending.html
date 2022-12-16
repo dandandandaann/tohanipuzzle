@@ -64,7 +64,7 @@
     <script>
         window.addEventListener('load', () => {
 
-            const encodedSolution = "`8B6=J+QI8=A.)(*0+Agr+..0986B,jM/D8*31-Dw-rmf_lgnsxxjc1";
+            const encodedSolution = "Htslwfyzqfyntsx%ts%knsnxmnsl%y6G=7IFJ;mj%ywjfxzwj%mzsy&%Ag0-N8LP7BQw4C/F*()/*018P%St|%ktqqt|%ymnx%nsxywzhyntsx%{jw~%xywnhyq~?%Lt%yt%ymj%gfw%fwjf%fsi%ymjs%jsyjw%ymj%xytwflj%wttr3%Lt%xywfnlmy%fmjfi%fsi%yzws%ymj%knwxy%wnlmy%ns%ymj%gwtpjs%xnsp3%Pjju%ts%|fqpnsl%ufxy%ymj%ijju%kw~jw%zsynq%~tz%wjfhm%ymj%tymjw%xnsp3%Qttp%yt%~tzw%wnlmy3";
 
             document.getElementById('solution-text').innerHTML =
                 MyDecode(
@@ -76,7 +76,7 @@
                 document.getElementById('solution-text').innerHTML =
                     MyDecode(
                         encodedSolution,
-                        document.getElementById('answer').value.toLowerCase()
+                        document.getElementById('answer').value
                     );
             });
         });
@@ -86,21 +86,26 @@
                 return textToDecode;
             if (!password)
                 password = 0;
+            password = password < 4 ? password + 445 : password;
+            password = password == 45 ? password - 4 : password;
+            password = password == 51 ? password - 5 + 1 : password;
 
             var newText = textToDecode.toString().replace('*()', '<').replace(')(*', '>');
             var pwValue = CreatePwValue(password.toString());
 
-            newText = RemoveRandomString(newText, 7, pwValue[7]);
+            newText = RemoveRandomString(newText, 70, pwValue[7]);
             newText = RemoveRandomString(newText, 1, pwValue[2]);
-            newText = RemoveRandomString(newText, 3, pwValue[3]);
-            newText = RemoveRandomString(newText, 5, pwValue[5]);
+            newText = RemoveRandomString(newText, 30, pwValue[3]);
+            newText = RemoveRandomString(newText, 50, pwValue[5]);
 
             // newText = ShiftCharCodeInString(newText, pwValue[0], false, 'odd');
             // newText = ShiftCharCodeInString(newText, -pwValue[1], false, 'even');
-            newText = ShiftCharCodeInString(newText, pwValue[0] * -1, false);
+            newText = ShiftCharCodeInString(newText, pwValue[0], false);
             newText = ShiftCharCodeInString(newText, pwValue[1], false);
-            newText = ShiftCharCodeInString(newText, pwValue[3], false);
+            newText = ShiftCharCodeInString(newText, pwValue[2], false);
+            newText = ShiftCharCodeInString(newText, pwValue[3] * -1, false);
             newText = ShiftCharCodeInString(newText, pwValue[4] * -1, false);
+            newText = ShiftCharCodeInString(newText, pwValue[5], false);
             newText = ShiftCharCodeInString(newText, pwValue[6], false);
             newText = ShiftCharCodeInString(newText, pwValue[7] * -1, false);
 
@@ -163,7 +168,7 @@
 <body>
     <div id="before-header"></div>
     <div id="content">
-        <h1>What is the worst movie ever?</h1>
+        <h1>What is the sum of all the number + the next one?</h1>
         <input id="answer" type="text" />
         <div id="solution">
             <div id="solution-text"></div>
