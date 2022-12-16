@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Treasure hunt end</title>
+    <style>
+        html {
+            background: #6C7989 linear-gradient(#4e698a, #2b3b4d) fixed;
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            font: 14px/1.5 "Helvetica Neue", Roboto, Helvetica, Arial, sans-serif;
+            font-weight: 300;
+            vertical-align: middle;
+            align-content: center;
+            display: flex;
+            flex-wrap: wrap;
+            height: 100%;
+        }
+
+        #content {
+            margin: 0 auto;
+            width: 740px;
+            height: 300px;
+            border-radius: 8px;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+            background: #DEDEDE;
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        input {
+            width: 100%;
+            height: 25px;
+            max-width: 300px;
+            border-radius: 8px;
+            text-align: center;
+            font: 18px "Helvetica Neue", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        #solution {
+            border: 2px;
+            box-shadow: rgba(0, 0, 0, 0.2) 0 0 0 1px, rgba(0, 0, 0, 0.45) 0 3px 10px;
+            background: black;
+
+            width: inherit;
+            min-height: 100px;
+            margin: 30px;
+            word-wrap: break-word;
+        }
+
+        #solution-text {
+            color: #00bf00;
+            margin: 0 auto;
+            padding: 20px;
+        }
+    </style>
+    <script>
+        window.addEventListener('load', () => {
+
+            const encodedSolution = "Htslwfyzqfyntsx%ts%knsnxmnsl%y6G=7IFJ;mj%ywjfxzwj%mzsy&%Ag0-N8LP7BQw4C/F*()/*018P%St|%ktqqt|%ymnx%nsxywzhyntsx%{jw~%xywnhyq~?%Lt%yt%ymj%gfw%fwjf%fsi%ymjs%jsyjw%ymj%xytwflj%wttr3%Lt%xywfnlmy%fmjfi%fsi%yzws%ymj%knwxy%wnlmy%ns%ymj%gwtpjs%xnsp3%Pjju%ts%|fqpnsl%ufxy%ymj%ijju%kw~jw%zsynq%~tz%wjfhm%ymj%tymjw%xnsp3%Qttp%yt%~tzw%wnlmy3";
+
+            document.getElementById('solution-text').innerHTML =
+                MyDecode(
+                    encodedSolution,
+                    document.getElementById('answer').value
+                );
+
+            document.getElementById('answer').addEventListener('input', () => {
+                document.getElementById('solution-text').innerHTML =
+                    MyDecode(
+                        encodedSolution,
+                        document.getElementById('answer').value
+                    );
+            });
+        });
+
+        function MyDecode(textToDecode, password) {
+            if (textToDecode.length < 6)
+                return textToDecode;
+            if (!password)
+                password = 0;
+            password = password < 4 ? password + 445 : password;
+            password = password == 45 ? password - 4 : password;
+            password = password == 51 ? password - 5 + 1 : password;
+
+            var newText = textToDecode.toString().replace('*()', '<').replace(')(*', '>');
+            var pwValue = CreatePwValue(password.toString());
+
+            newText = RemoveRandomString(newText, 70, pwValue[7]);
+            newText = RemoveRandomString(newText, 1, pwValue[2]);
+            newText = RemoveRandomString(newText, 30, pwValue[3]);
+            newText = RemoveRandomString(newText, 50, pwValue[5]);
+
+            // newText = ShiftCharCodeInString(newText, pwValue[0], false, 'odd');
+            // newText = ShiftCharCodeInString(newText, -pwValue[1], false, 'even');
+            newText = ShiftCharCodeInString(newText, pwValue[0], false);
+            newText = ShiftCharCodeInString(newText, pwValue[1], false);
+            newText = ShiftCharCodeInString(newText, pwValue[2], false);
+            newText = ShiftCharCodeInString(newText, pwValue[3] * -1, false);
+            newText = ShiftCharCodeInString(newText, pwValue[4] * -1, false);
+            newText = ShiftCharCodeInString(newText, pwValue[5], false);
+            newText = ShiftCharCodeInString(newText, pwValue[6], false);
+            newText = ShiftCharCodeInString(newText, pwValue[7] * -1, false);
+
+            return newText;
+        }
+
+        function CreatePwValue(password) {
+
+            var pwMaxLength = 8;
+
+            var result = ((password
+                .split('')
+                .map(x => x.charCodeAt(0))
+                .reduce((partialSum, x) => partialSum + x, 0)
+                + password.charCodeAt(password.length - 1))
+                * password.charCodeAt(0))
+                .toString().substring(0, pwMaxLength)
+                .padEnd(pwMaxLength, '9')
+                ;
+            return result;
+        }
+
+        function ShiftCharCodeInString(value, addBy, forward = true, oddEven = null) {
+            if (!forward)
+                addBy = addBy * -1;
+            let newValue = '';
+
+            let valueSplit = value.split('');
+            for (let i = 0; i < value.length; i++) {
+                if (oddEven === null ||
+                    (oddEven === 'even' && i % 2 == 0) ||
+                    oddEven === 'odd' && i % 2 != 0)
+                    valueSplit[i] = ShiftCharCode(valueSplit[i], parseInt(addBy));
+            }
+            return valueSplit.join('');
+        }
+
+        function ShiftCharCode(charInput, addBy) {
+            let newCharcode = charInput.charCodeAt(0) + parseInt(addBy);
+            return String.fromCharCode(newCharcode);
+        }
+
+        const firstCharCode = 42;
+        const lastCharCode = 83;
+        function GenerateRandomString(length) {
+            let result = '';
+            for (let i = 0; i < length; i++)
+                result += String.fromCharCode(Math.floor(Math.random() * (lastCharCode - firstCharCode) + firstCharCode));
+            return result;
+        }
+
+        function RemoveRandomString(value, position, length) {
+            let stringStart = value.slice(0, position);
+            let stringEnd = value.slice(parseInt(position) + parseInt(length));
+            return `${stringStart}${stringEnd}`;
+        }
+    </script>
+</head>
+
+<body>
+    <div id="before-header"></div>
+    <div id="content">
+        <h1>What is the sum of all the number + the next one?</h1>
+        <input id="answer" type="text" />
+        <div id="solution">
+            <div id="solution-text"></div>
+        </div>
+    </div>
+</body>
+
+</html>
